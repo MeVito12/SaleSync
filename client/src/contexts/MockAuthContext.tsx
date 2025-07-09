@@ -5,7 +5,7 @@ const mockUser: User = {
   id: '1',
   name: 'Usuário Teste',
   email: 'usuario@teste.com',
-  role: 'representante'
+  role: 'master'
 };
 
 const mockAuthContext: AuthContextType = {
