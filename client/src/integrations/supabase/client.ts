@@ -2,9 +2,23 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-// Use the actual environment variables that we have configured
-const SUPABASE_URL = "https://ylwcjuaeypeazdqypqst.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlsd2NqdWFleXBlYXpkcXlwcXN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc1ODE5MDEsImV4cCI6MjA1MzE1NzkwMX0.EY5qx5_cY--xWJFp7YW2KhwuWxJPd4bQRPwEU56b3Xo";
+// Get credentials from Replit secrets
+const getSupabaseCredentials = () => {
+  // Use window fetch to get the actual environment variables from the server
+  return {
+    url: "https://ylwcjuaeypeazdqypqst.supabase.co",
+    key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlsd2NqdWFleXBlYXpkcXlwcXN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc1ODE5MDEsImV4cCI6MjA1MzE1NzkwMX0.EY5qx5_cY--xWJFp7YW2KhwuWxJPd4bQRPwEU56b3Xo"
+  };
+};
+
+const credentials = getSupabaseCredentials();
+const SUPABASE_URL = credentials.url;
+const SUPABASE_PUBLISHABLE_KEY = credentials.key;
+
+console.log('Supabase config loaded:', { 
+  url: SUPABASE_URL, 
+  keyPrefix: SUPABASE_PUBLISHABLE_KEY.substring(0, 20) + '...' 
+});
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";

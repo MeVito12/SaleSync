@@ -137,20 +137,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Clean up any existing auth state before attempting login
       cleanupAuthState();
       
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password: password,
+      // Use server-side authentication
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email.trim(),
+          password: password,
+        }),
       });
 
-      if (error) {
-        console.error('Login error:', error.message);
+      const result = await response.json();
+      console.log('Server response:', result);
+
+      if (!result.success) {
+        console.error('Login error:', result.error);
         setIsLoading(false);
         return false;
       }
 
-      if (data.user && data.session) {
-        console.log('Login successful, redirecting...');
-        // Force immediate redirect without waiting for auth state change
+      if (result.user && result.session) {
+        console.log('Login successful, setting session...');
+        
+        // Set the session in Supabase client
+        await supabase.auth.setSession({
+          access_token: result.session.access_token,
+          refresh_token: result.session.refresh_token,
+        });
+        
+        console.log('Session set, redirecting...');
+        // Force immediate redirect
         window.location.href = '/';
         return true;
       }
