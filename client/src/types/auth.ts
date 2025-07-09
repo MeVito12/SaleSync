@@ -23,10 +23,12 @@ export interface ChangePasswordData {
 
 export interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  session: any;
   isLoading: boolean;
-  createUser: (userData: CreateUserData) => Promise<{ success: boolean; error?: string }>;
+  isInitialized: boolean;
+  login: (email: string, password: string) => Promise<{ success: boolean; user?: User; error?: string }>;
+  logout: () => Promise<{ success: boolean }>;
+  createUser: (userData: CreateUserData) => Promise<{ success: boolean; user?: User; error?: string }>;
   changePassword: (data: ChangePasswordData) => Promise<{ success: boolean; error?: string }>;
   fetchAllUsers: () => Promise<{ users: User[]; error?: string }>;
   updateUserRole: (userId: string, newRole: UserRole) => Promise<{ success: boolean; error?: string }>;

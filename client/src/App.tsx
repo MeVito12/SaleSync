@@ -4,11 +4,9 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Route, Switch } from "wouter";
-// Temporarily using mock auth for testing
 import { MockAuthProvider } from "./contexts/MockAuthContext";
-// import { AuthProvider } from "./contexts/AuthContext";
-// import { ProtectedRoute } from "./components/ProtectedRoute";
-// import LoginPage from "./pages/LoginPage";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import LoginPage from "./pages/LoginPage";
 import Dashboard from "./pages/Dashboard";
 import ClientsPage from "./pages/ClientsPage";
 import ProductsPage from "./pages/ProductsPage";
@@ -42,76 +40,104 @@ const App = () => {
           <Toaster />
           <Sonner />
           <Switch>
-          {/* Temporarily removed login route */}
+          <Route path="/login">
+            <LoginPage />
+          </Route>
           <Route path="/">
-            <Layout>
-              <Dashboard />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <Dashboard />
+              </Layout>
+            </ProtectedRoute>
           </Route>
           <Route path="/clients">
-            <Layout>
-              <ClientsPage />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <ClientsPage />
+              </Layout>
+            </ProtectedRoute>
           </Route>
           <Route path="/products">
-            <Layout>
-              <ProductsPage />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <ProductsPage />
+              </Layout>
+            </ProtectedRoute>
           </Route>
           <Route path="/industries">
-            <Layout>
-              <IndustriesPage />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <IndustriesPage />
+              </Layout>
+            </ProtectedRoute>
           </Route>
           <Route path="/categories">
-            <Layout>
-              <CategoriesPage />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <CategoriesPage />
+              </Layout>
+            </ProtectedRoute>
           </Route>
           <Route path="/sales">
-            <Layout>
-              <SalesPage />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <SalesPage />
+              </Layout>
+            </ProtectedRoute>
           </Route>
           <Route path="/financial">
-            <Layout>
-              <FinancialPage />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <FinancialPage />
+              </Layout>
+            </ProtectedRoute>
           </Route>
           <Route path="/financial/payment-methods">
-            <Layout>
-              <PaymentMethodsPage />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <PaymentMethodsPage />
+              </Layout>
+            </ProtectedRoute>
           </Route>
           <Route path="/financial/commission-rules">
-            <Layout>
-              <CommissionRulesPage />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <CommissionRulesPage />
+              </Layout>
+            </ProtectedRoute>
           </Route>
           <Route path="/financial/receivables">
-            <Layout>
-              <ReceivablesPage />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <ReceivablesPage />
+              </Layout>
+            </ProtectedRoute>
           </Route>
           <Route path="/financial/saldo">
-            <Layout>
-              <SaldoPage />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <SaldoPage />
+              </Layout>
+            </ProtectedRoute>
           </Route>
           <Route path="/reports">
-            <Layout>
-              <ReportsPage />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <ReportsPage />
+              </Layout>
+            </ProtectedRoute>
           </Route>
           <Route>
-            <Layout>
-              <div className="flex items-center justify-center min-h-screen">
-                <div className="text-center">
-                  <h1 className="text-4xl font-bold mb-4">404</h1>
-                  <p className="text-muted-foreground">Página não encontrada</p>
+            <ProtectedRoute>
+              <Layout>
+                <div className="flex items-center justify-center min-h-screen">
+                  <div className="text-center">
+                    <h1 className="text-4xl font-bold mb-4">404</h1>
+                    <p className="text-muted-foreground">Página não encontrada</p>
+                  </div>
                 </div>
-              </div>
-            </Layout>
+              </Layout>
+            </ProtectedRoute>
           </Route>
         </Switch>
         </MockAuthProvider>
