@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/MockAuthContext';
 import { useLocation } from 'wouter';
 import { cn } from '@/lib/utils';
 import { SidebarHeader } from './SidebarHeader';
