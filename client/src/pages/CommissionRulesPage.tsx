@@ -18,9 +18,9 @@ const CommissionRulesPage = () => {
   } = useCommissionRules();
 
   const filteredRules = commissionRules.filter(rule =>
-    rule.representative?.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    rule.industry?.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    rule.category?.nome.toLowerCase().includes(searchTerm.toLowerCase())
+    rule.representative?.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    rule.industry?.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    rule.category?.nome?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleSaveRule = async (ruleData: any) => {
