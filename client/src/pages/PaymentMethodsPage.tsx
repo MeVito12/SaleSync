@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Edit, Trash2, Search } from 'lucide-react';
 import { PaymentMethodDialog } from '@/components/PaymentMethodDialog';
-import { useSupabasePaymentMethods } from '@/hooks/useSupabasePaymentMethods';
+import { usePaymentMethods } from '@/hooks/usePaymentMethods';
 
 const PaymentMethodsPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -15,7 +15,7 @@ const PaymentMethodsPage = () => {
     createPaymentMethod, 
     updatePaymentMethod, 
     deletePaymentMethod 
-  } = useSupabasePaymentMethods();
+  } = usePaymentMethods();
 
   const filteredPaymentMethods = paymentMethods.filter(method =>
     method.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||

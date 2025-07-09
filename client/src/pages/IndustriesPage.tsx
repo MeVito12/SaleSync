@@ -1,12 +1,11 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Edit, Trash2, Search, Building } from 'lucide-react';
 import { IndustryDialog } from '@/components/IndustryDialog';
-import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { useIndustries } from '@/hooks/useIndustries';
 
 interface Industry {
   id: string;
@@ -17,35 +16,8 @@ interface Industry {
 }
 
 const IndustriesPage = () => {
-  const [industries, setIndustries] = useState<Industry[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    fetchIndustries();
-  }, []);
-
-  const fetchIndustries = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('industries')
-        .select('*')
-        .order('nome');
-
-      if (error) throw error;
-      setIndustries(data || []);
-    } catch (error) {
-      console.error('Erro ao buscar indústrias:', error);
-      toast({
-        title: "Erro",
-        description: "Erro ao carregar indústrias",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { industries, loading, createIndustry, updateIndustry, deleteIndustry } = useIndustries();
 
   const filteredIndustries = industries.filter(industry =>
     industry.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -54,74 +26,15 @@ const IndustriesPage = () => {
   );
 
   const handleSaveIndustry = async (industryData: Omit<Industry, 'id'>) => {
-    try {
-      const { error } = await supabase
-        .from('industries')
-        .insert([industryData]);
-
-      if (error) throw error;
-
-      toast({
-        title: "Sucesso",
-        description: "Indústria cadastrada com sucesso"
-      });
-      fetchIndustries();
-    } catch (error) {
-      console.error('Erro ao salvar indústria:', error);
-      toast({
-        title: "Erro",
-        description: "Erro ao cadastrar indústria",
-        variant: "destructive"
-      });
-    }
+    await createIndustry(industryData);
   };
 
   const handleUpdateIndustry = async (id: string, industryData: Omit<Industry, 'id'>) => {
-    try {
-      const { error } = await supabase
-        .from('industries')
-        .update(industryData)
-        .eq('id', id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Sucesso",
-        description: "Indústria atualizada com sucesso"
-      });
-      fetchIndustries();
-    } catch (error) {
-      console.error('Erro ao atualizar indústria:', error);
-      toast({
-        title: "Erro",
-        description: "Erro ao atualizar indústria",
-        variant: "destructive"
-      });
-    }
+    await updateIndustry(id, industryData);
   };
 
   const handleDeleteIndustry = async (id: string) => {
-    try {
-      const { error } = await supabase
-        .from('industries')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Sucesso",
-        description: "Indústria removida com sucesso"
-      });
-      fetchIndustries();
-    } catch (error) {
-      console.error('Erro ao deletar indústria:', error);
-      toast({
-        title: "Erro",
-        description: "Erro ao remover indústria",
-        variant: "destructive"
-      });
-    }
+    await deleteIndustry(id);
   };
 
   if (loading) {

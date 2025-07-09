@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { mockProducts, mockCategories, mockIndustries } from '@/data/mockData';
 
 interface Product {
   id: string;
@@ -29,17 +29,20 @@ export const useProducts = (industriaId?: string, searchTerm?: string) => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('products')
-        .select(`
-          *,
-          categories(nome),
-          industries(nome)
-        `)
-        .order('nome');
-
-      if (error) throw error;
-      setAllProducts(data || []);
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const productsWithRelations = mockProducts.map(product => ({
+        ...product,
+        categories: mockCategories.find(c => c.id === product.categoria_id),
+        industries: mockIndustries.find(i => i.id === product.industria_id)
+      }));
+      
+      const sortedProducts = productsWithRelations.sort((a, b) => 
+        a.nome.localeCompare(b.nome)
+      );
+      
+      setAllProducts(sortedProducts);
     } catch (error) {
       console.error('Error fetching products:', error);
       toast({

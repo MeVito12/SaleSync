@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { mockCommissionRules } from '@/data/mockData';
 
 interface CommissionRule {
   id: string;
@@ -20,16 +20,10 @@ export const useCommissionCalculation = () => {
 
   const fetchCommissionRules = async () => {
     try {
-      const { data, error } = await supabase
-        .from('commission_rules')
-        .select(`
-          *,
-          representative:new_representante_id(is_master)
-        `);
-
-      if (error) throw error;
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 300));
       
-      const typedData = (data || []).map(rule => ({
+      const typedData = mockCommissionRules.map(rule => ({
         ...rule,
         base_calculo: (rule.base_calculo === 'produto' || rule.base_calculo === 'total') 
           ? rule.base_calculo as 'produto' | 'total'

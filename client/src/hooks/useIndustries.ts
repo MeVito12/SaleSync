@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { mockIndustries } from '@/data/mockData';
 
 interface Industry {
   id: string;
@@ -21,13 +21,13 @@ export const useIndustries = () => {
   const fetchIndustries = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('industries')
-        .select('*')
-        .order('nome');
-
-      if (error) throw error;
-      setIndustries(data || []);
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const sortedIndustries = [...mockIndustries].sort((a, b) => 
+        a.nome.localeCompare(b.nome)
+      );
+      setIndustries(sortedIndustries);
     } catch (error) {
       console.error('Error fetching industries:', error);
       toast({

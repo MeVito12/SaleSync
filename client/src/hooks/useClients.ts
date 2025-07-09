@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { mockClients } from '@/data/mockData';
 
 interface Client {
   id: string;
@@ -24,13 +24,13 @@ export const useClients = () => {
   const fetchClients = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('clients')
-        .select('*')
-        .order('nome_fantasia');
-
-      if (error) throw error;
-      setClients(data || []);
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const sortedClients = [...mockClients].sort((a, b) => 
+        a.nome_fantasia.localeCompare(b.nome_fantasia)
+      );
+      setClients(sortedClients);
     } catch (error) {
       console.error('Error fetching clients:', error);
       toast({
@@ -45,20 +45,24 @@ export const useClients = () => {
 
   const createClient = async (clientData: Omit<Client, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      const { data, error } = await supabase
-        .from('clients')
-        .insert([clientData])
-        .select()
-        .single();
-
-      if (error) throw error;
-
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      const newClient = {
+        ...clientData,
+        id: `client_${Date.now()}`,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      
+      mockClients.push(newClient);
       await fetchClients();
+      
       toast({
         title: "Sucesso",
         description: "Cliente criado com sucesso"
       });
-      return data;
+      return newClient;
     } catch (error) {
       console.error('Error creating client:', error);
       toast({
@@ -72,21 +76,26 @@ export const useClients = () => {
 
   const updateClient = async (id: string, clientData: Omit<Client, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      const { data, error } = await supabase
-        .from('clients')
-        .update({ ...clientData, updated_at: new Date().toISOString() })
-        .eq('id', id)
-        .select()
-        .single();
-
-      if (error) throw error;
-
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      const clientIndex = mockClients.findIndex(c => c.id === id);
+      if (clientIndex === -1) throw new Error('Cliente não encontrado');
+      
+      const updatedClient = {
+        ...mockClients[clientIndex],
+        ...clientData,
+        updated_at: new Date().toISOString()
+      };
+      
+      mockClients[clientIndex] = updatedClient;
       await fetchClients();
+      
       toast({
         title: "Sucesso",
         description: "Cliente atualizado com sucesso"
       });
-      return data;
+      return updatedClient;
     } catch (error) {
       console.error('Error updating client:', error);
       toast({
@@ -100,14 +109,15 @@ export const useClients = () => {
 
   const deleteClient = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('clients')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      const clientIndex = mockClients.findIndex(c => c.id === id);
+      if (clientIndex === -1) throw new Error('Cliente não encontrado');
+      
+      mockClients.splice(clientIndex, 1);
       await fetchClients();
+      
       toast({
         title: "Sucesso",
         description: "Cliente removido com sucesso"

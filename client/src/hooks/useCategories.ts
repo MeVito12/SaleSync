@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { mockCategories } from '@/data/mockData';
 
 interface Category {
   id: string;
@@ -19,13 +19,13 @@ export const useCategories = () => {
   const fetchCategories = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('categories')
-        .select('*')
-        .order('nome');
-
-      if (error) throw error;
-      setCategories(data || []);
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const sortedCategories = [...mockCategories].sort((a, b) => 
+        a.nome.localeCompare(b.nome)
+      );
+      setCategories(sortedCategories);
     } catch (error) {
       console.error('Error fetching categories:', error);
       toast({
@@ -40,20 +40,24 @@ export const useCategories = () => {
 
   const createCategory = async (categoryData: Omit<Category, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      const { data, error } = await supabase
-        .from('categories')
-        .insert([categoryData])
-        .select()
-        .single();
-
-      if (error) throw error;
-
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      const newCategory = {
+        ...categoryData,
+        id: `category_${Date.now()}`,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      
+      mockCategories.push(newCategory);
       await fetchCategories();
+      
       toast({
         title: "Sucesso",
         description: "Categoria criada com sucesso"
       });
-      return data;
+      return newCategory;
     } catch (error) {
       console.error('Error creating category:', error);
       toast({
@@ -67,21 +71,26 @@ export const useCategories = () => {
 
   const updateCategory = async (id: string, categoryData: Omit<Category, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      const { data, error } = await supabase
-        .from('categories')
-        .update({ ...categoryData, updated_at: new Date().toISOString() })
-        .eq('id', id)
-        .select()
-        .single();
-
-      if (error) throw error;
-
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      const categoryIndex = mockCategories.findIndex(c => c.id === id);
+      if (categoryIndex === -1) throw new Error('Categoria não encontrada');
+      
+      const updatedCategory = {
+        ...mockCategories[categoryIndex],
+        ...categoryData,
+        updated_at: new Date().toISOString()
+      };
+      
+      mockCategories[categoryIndex] = updatedCategory;
       await fetchCategories();
+      
       toast({
         title: "Sucesso",
         description: "Categoria atualizada com sucesso"
       });
-      return data;
+      return updatedCategory;
     } catch (error) {
       console.error('Error updating category:', error);
       toast({
@@ -95,14 +104,15 @@ export const useCategories = () => {
 
   const deleteCategory = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('categories')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      const categoryIndex = mockCategories.findIndex(c => c.id === id);
+      if (categoryIndex === -1) throw new Error('Categoria não encontrada');
+      
+      mockCategories.splice(categoryIndex, 1);
       await fetchCategories();
+      
       toast({
         title: "Sucesso",
         description: "Categoria removida com sucesso"

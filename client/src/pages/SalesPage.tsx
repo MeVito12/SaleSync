@@ -1,6 +1,6 @@
 
 import { useState, useMemo, useCallback } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/MockAuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useSales } from '@/hooks/useSales';
 import { useIndustries } from '@/hooks/useIndustries';

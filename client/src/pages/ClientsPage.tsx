@@ -1,12 +1,11 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Edit, Trash2, Search, Users } from 'lucide-react';
 import { ClientDialog } from '@/components/ClientDialog';
-import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { useClients } from '@/hooks/useClients';
 
 interface Client {
   id: string;
@@ -18,35 +17,8 @@ interface Client {
 }
 
 const ClientsPage = () => {
-  const [clients, setClients] = useState<Client[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    fetchClients();
-  }, []);
-
-  const fetchClients = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('clients')
-        .select('*')
-        .order('nome_fantasia');
-
-      if (error) throw error;
-      setClients(data || []);
-    } catch (error) {
-      console.error('Erro ao buscar clientes:', error);
-      toast({
-        title: "Erro",
-        description: "Erro ao carregar clientes",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { clients, loading, createClient, updateClient, deleteClient } = useClients();
 
   const filteredClients = clients.filter(client =>
     client.nome_fantasia.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -55,74 +27,15 @@ const ClientsPage = () => {
   );
 
   const handleSaveClient = async (clientData: Omit<Client, 'id'>) => {
-    try {
-      const { error } = await supabase
-        .from('clients')
-        .insert([clientData]);
-
-      if (error) throw error;
-
-      toast({
-        title: "Sucesso",
-        description: "Cliente cadastrado com sucesso"
-      });
-      fetchClients();
-    } catch (error) {
-      console.error('Erro ao salvar cliente:', error);
-      toast({
-        title: "Erro",
-        description: "Erro ao cadastrar cliente",
-        variant: "destructive"
-      });
-    }
+    await createClient(clientData);
   };
 
   const handleUpdateClient = async (id: string, clientData: Omit<Client, 'id'>) => {
-    try {
-      const { error } = await supabase
-        .from('clients')
-        .update(clientData)
-        .eq('id', id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Sucesso",
-        description: "Cliente atualizado com sucesso"
-      });
-      fetchClients();
-    } catch (error) {
-      console.error('Erro ao atualizar cliente:', error);
-      toast({
-        title: "Erro",
-        description: "Erro ao atualizar cliente",
-        variant: "destructive"
-      });
-    }
+    await updateClient(id, clientData);
   };
 
   const handleDeleteClient = async (id: string) => {
-    try {
-      const { error } = await supabase
-        .from('clients')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Sucesso",
-        description: "Cliente removido com sucesso"
-      });
-      fetchClients();
-    } catch (error) {
-      console.error('Erro ao deletar cliente:', error);
-      toast({
-        title: "Erro",
-        description: "Erro ao remover cliente",
-        variant: "destructive"
-      });
-    }
+    await deleteClient(id);
   };
 
   if (loading) {

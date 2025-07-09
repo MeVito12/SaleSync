@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { CartItem } from '@/types/cart';
 import { ProductCart } from './ProductCart';
-import { useSaleProducts } from '@/hooks/useSaleProducts';
+// import { useSaleProducts } from '@/hooks/useSaleProducts';
 
 interface Sale {
   id?: string;
@@ -39,7 +39,9 @@ export const SaleCartManager = ({
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   
   // Buscar produtos existentes quando editando uma venda
-  const { products: existingProducts, loading: loadingProducts } = useSaleProducts(sale?.id);
+  // const { products: existingProducts, loading: loadingProducts } = useSaleProducts(sale?.id);
+  const existingProducts: any[] = [];
+  const loadingProducts = false;
 
   // Carregar produtos existentes no carrinho quando editando
   useEffect(() => {

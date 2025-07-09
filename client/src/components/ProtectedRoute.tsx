@@ -1,9 +1,8 @@
 
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/MockAuthContext';
 import { useLocation } from 'wouter';
 import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { cleanupAuthState } from '@/utils/authCleanup';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -21,7 +20,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   const handleForceCleanup = () => {
     console.log('Force cleanup triggered by user');
-    cleanupAuthState();
+    // cleanupAuthState();
     window.location.href = '/login';
   };
 

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { useSaleProducts } from '@/hooks/useSaleProducts';
+// import { useSaleProducts } from '@/hooks/useSaleProducts';
 import { useReceivables } from '@/hooks/useReceivables';
 import { InvoiceFormFields } from './invoice/InvoiceFormFields';
 import { InvoiceProductSelection } from './invoice/InvoiceProductSelection';
@@ -31,7 +31,9 @@ export const InvoiceDialog = ({ sale, onInvoice, trigger }: InvoiceDialogProps) 
   const { createReceivable } = useReceivables();
 
   // Buscar produtos da venda usando o hook
-  const { products: saleProducts, loading: productsLoading } = useSaleProducts(sale.id);
+  // const { products: saleProducts, loading: productsLoading } = useSaleProducts(sale.id);
+  const saleProducts: any[] = [];
+  const productsLoading = false;
 
   // Verificar se existem produtos na venda
   const hasProducts = saleProducts && saleProducts.length > 0;

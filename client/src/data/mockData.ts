@@ -9,7 +9,9 @@ export const mockClients = [
     email: 'contato@abc.com.br',
     estado: 'SP',
     telefone: '(11) 1234-5678',
-    segmento: 'Varejo'
+    segmento: 'Varejo',
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
   },
   {
     id: '2',
@@ -19,7 +21,21 @@ export const mockClients = [
     email: 'vendas@xyz.com.br',
     estado: 'RJ',
     telefone: '(21) 9876-5432',
-    segmento: 'Distribuição'
+    segmento: 'Distribuição',
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: '3',
+    nome_fantasia: 'Loja Tech',
+    razao_social: 'Tech Solutions Ltda',
+    cnpj: '12.345.678/0001-91',
+    email: 'contato@lojtech.com.br',
+    estado: 'MG',
+    telefone: '(31) 1234-5678',
+    segmento: 'Tecnologia',
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
   }
 ];
 
@@ -29,14 +45,27 @@ export const mockIndustries = [
     nome: 'Indústria Alpha',
     grupo: 'Grupo Alpha',
     cnpj: '11.222.333/0001-44',
-    estado: 'SP'
+    estado: 'SP',
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
   },
   {
     id: '2',
     nome: 'Indústria Beta',
     grupo: 'Grupo Beta',
     cnpj: '55.666.777/0001-88',
-    estado: 'MG'
+    estado: 'MG',
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: '3',
+    nome: 'Indústria Gamma',
+    grupo: 'Grupo Gamma',
+    cnpj: '77.888.999/0001-00',
+    estado: 'RS',
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
   }
 ];
 
@@ -44,12 +73,23 @@ export const mockCategories = [
   {
     id: '1',
     nome: 'Eletrônicos',
-    descricao: 'Produtos eletrônicos diversos'
+    descricao: 'Produtos eletrônicos diversos',
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
   },
   {
     id: '2',
     nome: 'Eletrodomésticos',
-    descricao: 'Eletrodomésticos para casa'
+    descricao: 'Eletrodomésticos para casa',
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: '3',
+    nome: 'Informática',
+    descricao: 'Produtos de informática e tecnologia',
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
   }
 ];
 
@@ -63,7 +103,9 @@ export const mockProducts = [
     preco_base: 1299.99,
     percentual_ipi: 15,
     categoria_id: '1',
-    industria_id: '1'
+    industria_id: '1',
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
   },
   {
     id: '2',
@@ -74,7 +116,22 @@ export const mockProducts = [
     preco_base: 3499.99,
     percentual_ipi: 18,
     categoria_id: '1',
-    industria_id: '1'
+    industria_id: '1',
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: '3',
+    codigo: 'PROD003',
+    nome: 'Tablet Pro',
+    ean: '7891234567892',
+    ncm: '84713000',
+    preco_base: 999.99,
+    percentual_ipi: 12,
+    categoria_id: '1',
+    industria_id: '2',
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
   }
 ];
 
@@ -126,12 +183,27 @@ export const mockPaymentMethods = [
 export const mockCommissionRules = [
   {
     id: '1',
-    representante_id: 'rep1',
+    new_representante_id: 'rep1',
     industria_id: '1',
     categoria_id: '1',
     percentual_industria: 5,
     percentual_repasse: 60,
-    base_calculo: 'produto' as const
+    base_calculo: 'produto' as const,
+    representative: {
+      is_master: false
+    }
+  },
+  {
+    id: '2',
+    new_representante_id: 'rep1',
+    industria_id: '2',
+    categoria_id: null,
+    percentual_industria: 4,
+    percentual_repasse: 50,
+    base_calculo: 'total' as const,
+    representative: {
+      is_master: false
+    }
   }
 ];
 

@@ -4,9 +4,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useClients } from '@/hooks/useClients';
 import { useIndustries } from '@/hooks/useIndustries';
-import { useSupabasePaymentMethods } from '@/hooks/useSupabasePaymentMethods';
-import { useAuthOperations } from '@/hooks/useAuthOperations';
-import { useQuery } from '@tanstack/react-query';
+import { usePaymentMethods } from '@/hooks/usePaymentMethods';
+import { useAuth } from '@/contexts/MockAuthContext';
+import { useRepresentatives } from '@/hooks/useRepresentatives';
 
 interface FormData {
   representante_id: string;
@@ -35,21 +35,8 @@ const tiposPedido = [
 export const SaleFormFields = ({ formData, onFieldChange }: SaleFormFieldsProps) => {
   const { clients, loading: clientsLoading } = useClients();
   const { industries, loading: industriesLoading } = useIndustries();
-  const { paymentMethods } = useSupabasePaymentMethods();
-  const { fetchAllUsers } = useAuthOperations();
-
-  // Buscar todos os usuários para o campo representante
-  const { data: usersData, isLoading: usersLoading } = useQuery({
-    queryKey: ['users'],
-    queryFn: async () => {
-      const result = await fetchAllUsers();
-      if (result.error) {
-        console.error('Error fetching users:', result.error);
-        return [];
-      }
-      return result.users;
-    },
-  });
+  const { paymentMethods } = usePaymentMethods();
+  const { representatives, loading: usersLoading } = useRepresentatives();
 
   return (
     <div className="space-y-6">
@@ -66,14 +53,14 @@ export const SaleFormFields = ({ formData, onFieldChange }: SaleFormFieldsProps)
                 <div className="p-2 text-sm text-muted-foreground text-center">
                   Carregando...
                 </div>
-              ) : !usersData || usersData.length === 0 ? (
+              ) : !representatives || representatives.length === 0 ? (
                 <div className="p-2 text-sm text-muted-foreground text-center">
                   Nenhum usuário cadastrado
                 </div>
               ) : (
-                usersData.map((user) => (
-                  <SelectItem key={user.id} value={user.id}>
-                    {user.name}
+                representatives.map((rep) => (
+                  <SelectItem key={rep.id} value={rep.id}>
+                    {rep.nome}
                   </SelectItem>
                 ))
               )}
