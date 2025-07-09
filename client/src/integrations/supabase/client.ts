@@ -2,10 +2,14 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-const SUPABASE_URL = "https://brhdykpnkyaovkwjlnhw.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJyaGR5a3Bua3lhb3Zrd2psbmh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg4NjMzOTQsImV4cCI6MjA2NDQzOTM5NH0.0Pz4EVxitJZTsAjf-8HBIJX5JXyZo43apIM10rkd6KY";
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "https://brhdykpnkyaovkwjlnhw.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJyaGR5a3Bua3lhb3Zrd2psbmh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg4NjMzOTQsImV4cCI6MjA2NDQzOTM5NH0.0Pz4EVxitJZTsAjf-8HBIJX5JXyZo43apIM10rkd6KY";
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
+
+if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+  console.error('Supabase configuration missing. Please check environment variables.');
+}
 
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);

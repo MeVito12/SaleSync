@@ -40,19 +40,21 @@ const callAdminFunction = async (action: string, data: any = {}) => {
     const requestBody = { action, ...data };
     console.log('Request body:', JSON.stringify(requestBody));
 
-    const { data: result, error } = await supabase.functions.invoke('admin-users', {
-      body: requestBody,
+    const response = await fetch('/api/admin/users', {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-      }
+        'Authorization': `Bearer ${session.data.session.access_token}`
+      },
+      body: JSON.stringify(requestBody)
     });
 
-    console.log('Admin function response:', { data: result, error });
-
-    if (error) {
-      console.error('Supabase function error:', error);
-      throw new Error('Edge Function returned a non-2xx status code');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+
+    const result = await response.json();
+    console.log('Admin function response:', result);
 
     if (!result.success) {
       throw new Error(result.error || 'Erro desconhecido');
