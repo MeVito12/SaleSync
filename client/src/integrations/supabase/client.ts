@@ -2,23 +2,8 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-// Get credentials from Replit secrets
-const getSupabaseCredentials = () => {
-  // Use window fetch to get the actual environment variables from the server
-  return {
-    url: "https://ylwcjuaeypeazdqypqst.supabase.co",
-    key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlsd2NqdWFleXBlYXpkcXlwcXN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc1ODE5MDEsImV4cCI6MjA1MzE1NzkwMX0.EY5qx5_cY--xWJFp7YW2KhwuWxJPd4bQRPwEU56b3Xo"
-  };
-};
-
-const credentials = getSupabaseCredentials();
-const SUPABASE_URL = credentials.url;
-const SUPABASE_PUBLISHABLE_KEY = credentials.key;
-
-console.log('Supabase config loaded:', { 
-  url: SUPABASE_URL, 
-  keyPrefix: SUPABASE_PUBLISHABLE_KEY.substring(0, 20) + '...' 
-});
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "https://brhdykpnkyaovkwjlnhw.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJyaGR5a3Bua3lhb3Zrd2psbmh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg4NjMzOTQsImV4cCI6MjA2NDQzOTM5NH0.0Pz4EVxitJZTsAjf-8HBIJX5JXyZo43apIM10rkd6KY";
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";

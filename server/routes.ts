@@ -14,51 +14,6 @@ const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Login route for authentication
-  app.post('/api/auth/login', async (req, res) => {
-    try {
-      const { email, password } = req.body;
-      
-      if (!email || !password) {
-        return res.status(400).json({ success: false, error: 'Email e senha são obrigatórios' });
-      }
-
-      console.log('Server-side login attempt:', email);
-      
-      const { data, error } = await supabaseAdmin.auth.signInWithPassword({
-        email: email.trim(),
-        password: password,
-      });
-
-      if (error) {
-        console.error('Login error:', error.message);
-        return res.status(401).json({ success: false, error: 'Email ou senha inválidos' });
-      }
-
-      if (data.user && data.session) {
-        return res.json({ 
-          success: true, 
-          user: data.user,
-          session: data.session
-        });
-      }
-
-      return res.status(401).json({ success: false, error: 'Falha na autenticação' });
-    } catch (error) {
-      console.error('Login exception:', error);
-      return res.status(500).json({ success: false, error: 'Erro interno do servidor' });
-    }
-  });
-
-  // Debug route to verify Supabase credentials
-  app.get('/api/supabase-config', (req, res) => {
-    res.json({
-      url: supabaseUrl,
-      hasKey: !!process.env.SUPABASE_ANON_KEY,
-      keyPrefix: process.env.SUPABASE_ANON_KEY?.substring(0, 20) + '...'
-    });
-  });
-
   // Admin user management routes
   app.post('/api/admin/users', async (req, res) => {
     try {
