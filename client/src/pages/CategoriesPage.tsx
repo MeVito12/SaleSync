@@ -7,6 +7,7 @@ import { Edit, Trash2, Search, Tag, Plus } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { useCategories } from '@/hooks/useCategories';
+import { useToast } from '@/hooks/use-toast';
 
 interface Category {
   id: string;
@@ -15,7 +16,6 @@ interface Category {
 }
 
 const CategoriesPage = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
@@ -23,33 +23,8 @@ const CategoriesPage = () => {
     nome: '',
     descricao: ''
   });
-  const [loading, setLoading] = useState(true);
+  const { categories, loading, createCategory, updateCategory, deleteCategory } = useCategories();
   const { toast } = useToast();
-
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const fetchCategories = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('categories')
-        .select('*')
-        .order('nome');
-
-      if (error) throw error;
-      setCategories(data || []);
-    } catch (error) {
-      console.error('Erro ao buscar categorias:', error);
-      toast({
-        title: "Erro",
-        description: "Erro ao carregar categorias",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const filteredCategories = categories.filter(category =>
     category.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -70,47 +45,16 @@ const CategoriesPage = () => {
 
     try {
       if (editingCategory) {
-        const { error } = await supabase
-          .from('categories')
-          .update({
-            nome: formData.nome,
-            descricao: formData.descricao
-          })
-          .eq('id', editingCategory.id);
-
-        if (error) throw error;
-
-        toast({
-          title: "Sucesso",
-          description: "Categoria atualizada com sucesso"
-        });
+        await updateCategory(editingCategory.id, formData);
       } else {
-        const { error } = await supabase
-          .from('categories')
-          .insert([{
-            nome: formData.nome,
-            descricao: formData.descricao
-          }]);
-
-        if (error) throw error;
-
-        toast({
-          title: "Sucesso",
-          description: "Categoria cadastrada com sucesso"
-        });
+        await createCategory(formData);
       }
 
       setDialogOpen(false);
       setEditingCategory(null);
       setFormData({ nome: '', descricao: '' });
-      fetchCategories();
     } catch (error) {
       console.error('Erro ao salvar categoria:', error);
-      toast({
-        title: "Erro",
-        description: "Erro ao salvar categoria",
-        variant: "destructive"
-      });
     }
   };
 
@@ -125,25 +69,9 @@ const CategoriesPage = () => {
 
   const handleDeleteCategory = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('categories')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Sucesso",
-        description: "Categoria removida com sucesso"
-      });
-      fetchCategories();
+      await deleteCategory(id);
     } catch (error) {
       console.error('Erro ao deletar categoria:', error);
-      toast({
-        title: "Erro",
-        description: "Erro ao remover categoria",
-        variant: "destructive"
-      });
     }
   };
 
