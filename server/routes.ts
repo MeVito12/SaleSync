@@ -1,33 +1,37 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
-const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
+// Mock data for development
+const mockUsers = [
+  {
+    id: '1',
+    name: 'Administrador',
+    email: 'admin@test.com',
+    role: 'master'
   },
-});
+  {
+    id: '2',
+    name: 'Usuário Teste',
+    email: 'user@test.com',
+    role: 'representante'
+  },
+  {
+    id: '3',
+    name: 'Representante',
+    email: 'rep@test.com',
+    role: 'representante'
+  }
+];
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Admin user management routes
+  // Mock admin user management routes
   app.post('/api/admin/users', async (req, res) => {
     try {
-      // Verify authentication
+      // Simple auth check - just verify token exists
       const authHeader = req.headers.authorization;
       if (!authHeader) {
         return res.status(401).json({ success: false, error: 'No authorization header' });
-      }
-
-      const token = authHeader.replace('Bearer ', '');
-      const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
-      
-      if (authError || !user) {
-        return res.status(401).json({ success: false, error: 'Unauthorized' });
       }
 
       const { action, ...data } = req.body;
@@ -43,77 +47,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
             });
           }
 
-          const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
+          // Mock user creation
+          const newUser = {
+            id: 'user-' + Date.now(),
             email,
-            password,
-            email_confirm: true,
-            user_metadata: {
-              name,
-              role
-            }
+            name,
+            role,
+            created_at: new Date().toISOString()
+          };
+
+          // Add to mock users list
+          mockUsers.push({
+            id: newUser.id,
+            name,
+            email,
+            role
           });
 
-          if (createError) {
-            return res.status(400).json({ success: false, error: createError.message });
-          }
-
-          // Create profile entry
-          const { error: profileError } = await supabaseAdmin
-            .from('profiles')
-            .insert({
-              id: newUser.user.id,
-              name
-            });
-
-          if (profileError) {
-            console.error('Error creating profile:', profileError);
-          }
-
-          return res.json({ success: true, user: newUser.user });
+          return res.json({ success: true, user: newUser });
         }
 
         case 'fetchAllUsers': {
-          const { data: authUsers, error: authError } = await supabaseAdmin.auth.admin.listUsers();
-
-          if (authError) {
-            return res.status(400).json({ success: false, error: authError.message });
-          }
-
-          const userIds = authUsers.users.map(u => u.id);
-          let profiles = [];
-          
-          if (userIds.length > 0) {
-            const { data: profilesData, error: profileError } = await supabaseAdmin
-              .from('profiles')
-              .select('id, name')
-              .in('id', userIds);
-
-            if (!profileError) {
-              profiles = profilesData || [];
-            }
-          }
-
-          const users = authUsers.users.map(authUser => {
-            const profile = profiles.find(p => p.id === authUser.id);
-            const role = authUser.user_metadata?.role || 'representante';
-            
-            let userName = profile?.name || authUser.user_metadata?.name;
-            if (!userName && authUser.email) {
-              userName = authUser.email.split('@')[0];
-            }
-            if (!userName) {
-              userName = 'Usuário';
-            }
-            
-            return {
-              id: authUser.id,
-              name: userName,
-              email: authUser.email || '',
-              role
-            };
-          });
-
-          return res.json({ success: true, users });
+          console.log('Fetching mock users');
+          return res.json({ success: true, users: mockUsers });
         }
 
         case 'updateUserRole': {
@@ -126,22 +82,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
             });
           }
 
-          const { data: targetUser } = await supabaseAdmin.auth.admin.getUserById(userId);
-          if (!targetUser?.user) {
+          // Find and update mock user
+          const userIndex = mockUsers.findIndex(u => u.id === userId);
+          if (userIndex === -1) {
             return res.status(404).json({ success: false, error: 'User not found' });
           }
 
-          const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
-            user_metadata: { 
-              ...targetUser.user.user_metadata,
-              role: newRole 
-            }
-          });
-
-          if (error) {
-            return res.status(400).json({ success: false, error: error.message });
-          }
-
+          mockUsers[userIndex].role = newRole;
           return res.json({ success: true });
         }
 
