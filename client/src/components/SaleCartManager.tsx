@@ -78,8 +78,6 @@ export const SaleCartManager = ({
           percentualComissao: percentualComissao
         };
       });
-      
-      console.log('Cart items created from existing products:', cartItemsFromExisting);
       setCartItems(cartItemsFromExisting);
     }
   }, [sale, existingProducts, loadingProducts]);
